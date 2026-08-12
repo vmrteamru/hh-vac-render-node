@@ -11,11 +11,10 @@ function getRandomJitter() {
 
 function parseVacancyHtml(htmlText, vacId) {
   try {
-    const marker = "window.HH.InitialState = ";
-    const startIndex = htmlText.indexOf(marker);
-    if (startIndex === -1) return { id: vacId, status: "unresolved_or_empty" };
+    const match = htmlText.match(/window\.HH\.InitialState\s*=\s*/);
+    if (!match) return { id: vacId, status: "unresolved_or_empty" };
 
-    const jsonStart = startIndex + marker.length;
+    const jsonStart = match.index + match[0].length;
     let braceCount = 0;
     let jsonEnd = -1;
 
@@ -68,7 +67,14 @@ async function fetchVacancySingle(vacId) {
         "User-Agent": USER_AGENT,
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
         "Accept-Language": "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7",
-        "Cache-Control": "no-cache"
+        "Sec-Ch-Ua": '"Not-A.Brand";v="99", "Chromium";v="124", "Google Chrome";v="124"',
+        "Sec-Ch-Ua-Mobile": "?0",
+        "Sec-Ch-Ua-Platform": '"Windows"',
+        "Sec-Fetch-Dest": "document",
+        "Sec-Fetch-Mode": "navigate",
+        "Sec-Fetch-Site": "none",
+        "Sec-Fetch-User": "?1",
+        "Upgrade-Insecure-Requests": "1"
       }
     });
 
